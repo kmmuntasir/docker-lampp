@@ -1,2 +1,7 @@
 .idea/
 .idea/*
+
+# NOT RECOMMENDED
+# Remove the following part if you want to commit your database, too
+db/data
+db/data/*

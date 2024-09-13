@@ -10,11 +10,14 @@ try {
     $connection = new mysqli(
         hostname: 'mariadb',
         username: 'root',
-        password: 'foobar',
+        password: 'root',
         database: 'test',
     );
 
     echo "Database Connected!!!\n";
 } catch (Exception $exception) {
+    echo "Database Connection Failed!!!\n";
+    echo '<pre>';
     print_r($exception);
+    echo '</pre>';
 }

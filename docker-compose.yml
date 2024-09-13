@@ -1,10 +1,25 @@
-version: '3.9'
-
 services:
-  lampp:
-    depends_on:
-      - db
-    build: .
+  docker_lampp_mariadb:
+    container_name: docker_lampp_mariadb
+    image: mariadb:10.11.2
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/data:/var/lib/mysql
+    #      Comment the previous line, and then enable the next line if you want to use a docker volume for DB data
+    #      instead of a project folder
+    #      - dbdata:/var/lib/mysql
+    networks:
+      - lampp-network
+
+  docker_lampp_php:
+    container_name: docker_lampp_php
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - ./:/var/www/html
 #      - ./src:/var/www/html
@@ -12,32 +27,31 @@ services:
     ports:
       - "80:80"
       - "443:443"
-
-  db:
-    container_name: mariadb
-    image: mariadb:10.11.2
-    ports:
-      - "3306:3306"
-    volumes:
-      - "./db/init.sql:/docker-entrypoint-initdb.d/init.sql"
-      - ./db/data:/var/lib/mysql
-#      Comment the previous line, and then enable the next line if you want to use a docker volume for DB data
-#      instead of a project folder
-#      - dbdata:/var/lib/mysql
-    environment:
-      MARIADB_ROOT_PASSWORD: foobar
-
-  phpmyadmin:
+    networks:
+      - lampp-network
     depends_on:
-      - db
+      - docker_lampp_mariadb
+
+  docker_lampp_phpmyadmin:
+    container_name: docker_lampp_phpmyadmin
     image: phpmyadmin/phpmyadmin
     ports:
-      - "9001:80"
+      - "8080:80"
     environment:
-      - PMA_HOST=mariadb
-      - PMA_PORT=3306
-      - PMA_USER=root
-      - PMA_PASSWORD=foobar
+      PMA_HOST: docker_lampp_mariadb
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 512M
+    networks:
+      - lampp-network
+    depends_on:
+      - docker_lampp_mariadb
+
+networks:
+  lampp-network:
+    driver: bridge
 
 #volumes:
 #  dbdata:

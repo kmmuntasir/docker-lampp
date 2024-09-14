@@ -7,8 +7,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-# Uncomment the next line to run the init.sql script on startup
-#      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./db/data:/var/lib/mysql # Using a local directory for data persistence
 #       Uncomment the next line and comment the previous one to use a named Docker volume
 #       - dbdata:/var/lib/mysql
@@ -20,11 +19,11 @@ services:
     container_name: php
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
     volumes:
-      - ./:/var/www/html  # Mount the entire project directory
+      - ../:/var/www/html  # Mount the entire project directory
       # Use the line below for a more specific directory structure if needed
-      # - ./src:/var/www/html
+      # - ../src:/var/www/html
     ports:
       - "80:80"
       - "443:443"

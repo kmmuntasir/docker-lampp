@@ -4,19 +4,22 @@ SERVICE_NAME="php"
 info:
 	echo 'docker lampp'
 
+# Build the containers
+build:
+	cd .docker_lampp && docker compose up -d --build
+
 # Start the containers
 start:
-	docker compose up -d
+	cd .docker_lampp && docker compose up -d
 
 # Stop the containers
 stop:
-	docker compose down
+	cd .docker_lampp && docker compose down
 
 # Restart the containers
 restart: stop start
 
-rebuild:
-	docker compose down && docker compose up -d --build
+rebuild: stop build
 
 # Enter the node container
 shell:

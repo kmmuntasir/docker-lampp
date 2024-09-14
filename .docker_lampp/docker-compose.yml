@@ -1,0 +1,61 @@
+services:
+  mariadb:
+    container_name: mariadb
+    image: mariadb:10.11.2
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/data:/var/lib/mysql # Using a local directory for data persistence
+#       Uncomment the next line and comment the previous one to use a named Docker volume
+#       - dbdata:/var/lib/mysql
+    networks:
+      - lampp-network
+    restart: always  # Ensures the service restarts in case of failure
+
+  php:
+    container_name: php
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ../:/var/www/html  # Mount the entire project directory
+      # Use the line below for a more specific directory structure if needed
+      # - ../src:/var/www/html
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - lampp-network
+    depends_on:
+      - mariadb
+    restart: always  # Ensures the service restarts in case of failure
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+      - "8080:80"  # Access phpMyAdmin on localhost:8080
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 512M
+    networks:
+      - lampp-network
+    depends_on:
+      - mariadb
+    restart: always  # Ensures the service restarts in case of failure
+
+networks:
+  lampp-network:
+    driver: bridge
+
+# Define named volume for database data if preferred
+#volumes:
+#  dbdata:
+#    driver: local

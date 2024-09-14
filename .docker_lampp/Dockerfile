@@ -28,26 +28,16 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
 RUN pecl install xdebug && \
     docker-php-ext-enable xdebug
 
-# Copy php.ini if it exists
-RUN [ -f /var/www/html/.docker_lampp/php.ini ] && cp /var/www/html/.docker_lampp/php.ini /usr/local/etc/php/ || echo "php.ini not found, skipping."
-
-# Copy custom xdebug.ini if it exists, otherwise set default Xdebug configuration
-RUN [ -f /var/www/html/.docker_lampp/xdebug.ini ] && cp /var/www/html/.docker_lampp/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini || \
-    (echo "xdebug.ini not found, using default settings" && \
-    echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini && \
-    echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-    echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-    echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-    echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/xdebug.ini)
+# Set working directory
+WORKDIR /var/www/html
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-# Copy apache-config.conf if it exists
-RUN [ -f /var/www/html/.docker_lampp/apache-config.conf ] && cp /var/www/html/.docker_lampp/apache-config.conf /etc/apache2/sites-available/000-default.conf || echo "apache-config.conf not found, skipping."
-
-# Set working directory
-WORKDIR /var/www/html
+# Copy .ini and .conf from .docker_lampp directory if it exists
+COPY php.ini /usr/local/etc/php/
+COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
 
 # Expose port 80 for HTTP traffic
 EXPOSE 80

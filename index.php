@@ -8,7 +8,7 @@ echo "Hello from lampp on Docker!!!<br><br>\n\n";
 
 try {
     $connection = new mysqli(
-        hostname: 'docker_lampp_mariadb',
+        hostname: 'mariadb',
         username: 'root',
         password: 'root',
         database: 'test',

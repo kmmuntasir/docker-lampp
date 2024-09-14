@@ -1,4 +1,4 @@
-SERVICE_NAME="docker_lampp_php"
+SERVICE_NAME="php"
 
 # Just the name
 info:

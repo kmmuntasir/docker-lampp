@@ -1,6 +1,9 @@
 .idea/
 .idea/*
 
+# Ignore certificates directory
+.docker_lampp/certs
+
 # NOT RECOMMENDED
 # Remove the following part if you want to commit your database, too
 .docker_lampp/db/data

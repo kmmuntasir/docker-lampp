@@ -4,6 +4,14 @@ SERVICE_NAME="php"
 info:
 	echo 'docker lampp'
 
+# Generate SSL certificates
+ssl:
+	cd .docker_lampp && chmod +x generate_certificates.sh && ./generate_certificates.sh
+
+# Perform cleanups
+clean:
+	cd .docker_lampp && chmod +x cleanup.sh && ./cleanup.sh
+
 # Build the containers
 build:
 	cd .docker_lampp && docker compose up -d --build

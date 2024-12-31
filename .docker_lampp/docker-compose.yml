@@ -1,5 +1,6 @@
 services:
   mariadb:
+    platform: linux/amd64
     container_name: mariadb
     image: mariadb:10.11.2
     environment:
@@ -16,6 +17,7 @@ services:
     restart: always  # Ensures the service restarts in case of failure
 
   php:
+    platform: linux/amd64
     container_name: php
     build:
       context: .
@@ -34,6 +36,7 @@ services:
     restart: always  # Ensures the service restarts in case of failure
 
   phpmyadmin:
+    platform: linux/amd64
     container_name: phpmyadmin
     image: phpmyadmin/phpmyadmin:latest
     ports:
